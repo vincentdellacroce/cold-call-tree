@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Cold Call Tree</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel-2:#1c2230; --border:#2a3140;
+    --text:#e6edf3; --muted:#8b949e;
+    --blue:#3b82f6; --blue-bg:#13233f; --blue-bd:#1e3a66;
+    --green:#22c55e; --green-bg:#0f2a1a; --green-bd:#1c5235;
+    --red:#ef4444; --red-bg:#2e1416; --red-bd:#5a2327;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.55; font-size:16px; padding-bottom:60px;
+  }
+
+  /* ---------- Password gate ---------- */
+  #gate{
+    position:fixed; inset:0; z-index:1000; background:var(--bg);
+    display:flex; align-items:center; justify-content:center; flex-direction:column; padding:24px;
+  }
+  #gate h1{font-size:38px; margin:0 0 4px}
+  #gate p{color:var(--muted); margin:0 0 24px}
+  #gate input{
+    width:200px; max-width:80vw; font-size:24px; text-align:center; letter-spacing:8px;
+    padding:14px; border-radius:12px; border:1px solid var(--border);
+    background:var(--panel); color:var(--text); outline:none;
+  }
+  #gate input:focus{border-color:var(--blue)}
+  #gate button{
+    margin-top:16px; font-size:17px; font-weight:600; padding:12px 32px; border:none;
+    border-radius:12px; background:var(--blue); color:#fff; cursor:pointer;
+  }
+  #gate button:active{transform:scale(.97)}
+  #err{color:var(--red); height:20px; margin-top:14px; font-size:14px}
+
+  /* ---------- Layout ---------- */
+  #app{display:none; max-width:820px; margin:0 auto; padding:20px 16px 0}
+  header{text-align:center; padding:8px 0 18px; border-bottom:1px solid var(--border); margin-bottom:18px}
+  header h1{margin:0; font-size:24px}
+  header .sub{color:var(--muted); font-size:13px; margin-top:4px}
+
+  .controls{display:flex; gap:10px; justify-content:center; margin:14px 0 22px; flex-wrap:wrap}
+  .controls button{
+    background:var(--panel-2); color:var(--text); border:1px solid var(--border);
+    padding:8px 16px; border-radius:999px; font-size:13px; cursor:pointer;
+  }
+  .controls button:active{transform:scale(.97)}
+
+  .legend{display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-bottom:20px; font-size:13px; color:var(--muted)}
+  .legend span{display:inline-flex; align-items:center; gap:6px}
+  .dot{width:11px; height:11px; border-radius:50%}
+  .dot.b{background:var(--blue)} .dot.g{background:var(--green)} .dot.r{background:var(--red)}
+
+  /* ---------- Blocks ---------- */
+  .block{margin:10px 0; border-radius:12px; padding:14px 16px; border:1px solid var(--border)}
+  .script{background:var(--blue-bg); border-color:var(--blue-bd)}
+  .script::before{content:"YOU"; display:block; font-size:11px; font-weight:700; letter-spacing:1px; color:var(--blue); margin-bottom:6px}
+  .yes{background:var(--green-bg); border-color:var(--green-bd)}
+  .yes::before{content:"THEY SAY ✓"; display:block; font-size:11px; font-weight:700; letter-spacing:1px; color:var(--green); margin-bottom:6px}
+  .no{background:var(--red-bg); border-color:var(--red-bd)}
+  .no::before{content:"OBJECTION / NO ✕"; display:block; font-size:11px; font-weight:700; letter-spacing:1px; color:var(--red); margin-bottom:6px}
+  .note{color:var(--muted); font-size:13px; font-style:italic; text-align:center; margin:6px 0}
+
+  /* ---------- Collapsibles ---------- */
+  details{background:var(--panel); border:1px solid var(--border); border-radius:14px; margin:12px 0; overflow:hidden}
+  details>summary{
+    list-style:none; cursor:pointer; padding:16px 18px; font-size:17px; font-weight:600;
+    display:flex; align-items:center; gap:10px; user-select:none;
+  }
+  details>summary::-webkit-details-marker{display:none}
+  details>summary .chev{margin-left:auto; color:var(--muted); transition:transform .2s; font-size:14px}
+  details[open]>summary .chev{transform:rotate(90deg)}
+  details>summary .tag{font-size:11px; font-weight:700; padding:3px 8px; border-radius:6px}
+  .tag.r{background:var(--red-bg); color:var(--red); border:1px solid var(--red-bd)}
+  .tag.q{background:var(--blue-bg); color:var(--blue); border:1px solid var(--blue-bd)}
+  .body{padding:0 16px 16px}
+
+  /* nested branch */
+  details details{background:var(--panel-2)}
+  .branch-title{font-size:13px; font-weight:700; letter-spacing:.5px; color:var(--muted); margin:18px 0 4px; text-transform:uppercase}
+</style>
+</head>
+<body>
+
+<!-- ============ PASSWORD GATE ============ -->
+<div id="gate">
+  <h1>🌳</h1>
+  <p>Enter passcode</p>
+  <input id="pw" type="tel" inputmode="numeric" maxlength="4" placeholder="••••" autocomplete="off">
+  <button id="go">Unlock</button>
+  <div id="err"></div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app">
+  <header>
+    <h1>🌳 Cold Call Script Tree</h1>
+    <div class="sub">Web design • Landscaping • Tri-county (NJ / NY / PA)</div>
+  </header>
+
+  <div class="legend">
+    <span><i class="dot b"></i> Your line</span>
+    <span><i class="dot g"></i> They say yes</span>
+    <span><i class="dot r"></i> Objection / no</span>
+  </div>
+
+  <div class="controls">
+    <button id="openAll">Expand all</button>
+    <button id="closeAll">Collapse all</button>
+  </div>
+
+  <!-- ===== OPENER ===== -->
+  <details open>
+    <summary>📞 The Opener <span class="chev">▶</span></summary>
+    <div class="body">
+      <div class="block script">"Hey, how's it going — did Howard from the IRS reach out to you today?"</div>
+      <div class="note">— "No.. why?"</div>
+      <div class="block script">"Well that's good because I don't know a Howard from the IRS. I was actually calling because I came across your business and I noticed you guys don't have a website. I actually went and put together a mock-up for you, free of charge. I want to jump on a quick Google Meet at the end of the day — like 5 o'clock — pull it up, walk you through it, takes 10 minutes. If you hate it we never have to talk again."</div>
+    </div>
+  </details>
+
+  <!-- ===== OBJECTION 1 ===== -->
+  <details>
+    <summary><span class="tag r">OBJ 1</span> "I'm not interested" <span class="chev">▶</span></summary>
+    <div class="body">
+      <div class="block script">"That's totally fair — honestly I'd say the same thing if a random number called me. I'm not trying to sell you anything right now, no credit card, nothing like that. All I did was put together a quick mock-up of what your business could look like online. Takes you 10 minutes to look at it, and if you think it's garbage, you never have to hear from me again. Genuinely. I just figured — you're out there doing good work, and nobody in the tri-county area can even find you online. That felt wrong. So I fixed it, at least on paper. Can we just jump on a quick Google Meet at end of day — like 5 o'clock?"</div>
+
+      <div class="branch-title">If they say no to the meet</div>
+      <div class="block script">"Can I ask why? Like genuinely — is it a time thing, or you just don't see the point of a website for your business?"</div>
+
+      <!-- BRANCH A -->
+      <details>
+        <summary><span class="tag q">A</span> "I don't see the point / don't need a website" <span class="chev">▶</span></summary>
+        <div class="body">
+          <div class="block script">"I hear that a lot actually. Can I ask — how do most of your jobs come in right now? Referrals?"</div>
+          <div class="block yes">They say yes.</div>
+          <div class="block script">"Yeah that's how most guys in the trades run it, and honestly referrals are great. But here's what I've seen with landscapers in the area — the referral guys who also have a clean site are charging 20-30% more because they look established. The customer already Googled them before they even called. You're doing the same work, just getting paid less for it because on paper you don't exist yet. That's really all I'm trying to fix for you. 10 minutes on a Google Meet, I'll show you what it looks like. If it doesn't change your mind, I'll leave you alone forever. What does 5 o'clock look like?"</div>
+
+          <div class="block no">Still no.</div>
+          <div class="block script">"Alright — what time works better for you? Morning, afternoon, I'll work around you completely."</div>
+
+          <div class="block no">Still no.</div>
+          <div class="block script">"You know what, I respect it. Let me ask you one thing before I let you go — if you woke up tomorrow and your phone was ringing off the hook from people in the area finding you on Google, would that be a problem for your business or a good thing?"</div>
+          <div class="block yes">They say "good thing".</div>
+          <div class="block script">"That's all a website does. I'll tell you what — I'm not going to waste your time with a meeting. Let me just text you a link later today. You look at it on your own time, no call, no pressure. If you want to talk you text me back, if not, no hard feelings. What's the best number to text it to?"</div>
+
+          <div class="block no">Refuses to give number / still no.</div>
+          <div class="block script">"Totally fine. I've built sites for landscapers in the area, both from scratch and for guys who already had something. Every single one of them said the same thing you're saying right now before they saw it. I'm not saying that to pressure you. I'm saying it because I get it, and I also know what's on the other side of 10 minutes. If you ever change your mind, my name is [Name]. You can find me at [business name]. I'll leave you alone now — but seriously, good luck out there."</div>
+          <div class="note">Hang up gracefully — they may call back.</div>
+        </div>
+      </details>
+
+      <!-- BRANCH B -->
+      <details>
+        <summary><span class="tag q">B</span> "I already have someone / a website" <span class="chev">▶</span></summary>
+        <div class="body">
+          <div class="block script">"Oh nice — where's the site at? I'll take a look real quick while I have you."</div>
+          <div class="block script">"No worries — I'll find it. But let me ask, are you happy with the leads it's bringing in, or is it more just kind of there?"</div>
+          <div class="block yes">They say it's just there / not getting leads.</div>
+          <div class="block script">"Yeah that's actually the most common thing I hear. A lot of guys have a site but it's not really working — it's not showing up on Google, it doesn't look great on mobile, nobody's filling out the contact form. A site that doesn't bring in calls is basically just a business card nobody looks at. What I put together for you is built specifically to rank in the tri-county area and actually convert visitors into calls. That's the difference. 10 minutes on a Google Meet and I'll show you exactly what I mean — you can literally compare them side by side. What does 5 o'clock look like?"</div>
+
+          <div class="block no">"I'm happy with what I have."</div>
+          <div class="block script">"That's great honestly — most guys aren't. Can I ask, are you getting consistent leads from it or is it more word of mouth still?"</div>
+          <div class="block yes">Word of mouth still.</div>
+          <div class="block script">"So the site exists but it's not really doing the heavy lifting yet. That's exactly what I specialize in. I'm not asking you to scrap what you have — I'm just saying let me show you what a site that actually brings in calls looks like, side by side with yours. 10 minutes. If yours is already doing everything mine does, I'll tell you straight up and leave you alone. Fair?"</div>
+
+          <div class="block no">Still no → go to the "text you a link" move from Branch A.</div>
+        </div>
+      </details>
+
+      <!-- BRANCH C -->
+      <details>
+        <summary><span class="tag q">C</span> "I'm too busy / bad time" <span class="chev">▶</span></summary>
+        <div class="body">
+          <div class="block script">"Totally get it — what's a better time? I'll call you back whenever works, morning, evening, weekend, I don't care."</div>
+          <div class="block yes">They give a time — lock it in.</div>
+          <div class="block script">"Perfect. I'll call you at [time] on [day]. What's the best number to reach you on so I don't come up as a random number again?"</div>
+
+          <div class="block no">Won't commit to a time.</div>
+          <div class="block script">"Got it. I'll try you again [tomorrow morning / end of week]. And in the meantime I'll text you the mock-up so you can get a feel for it before we even talk. Sound good?"</div>
+        </div>
+      </details>
+
+      <!-- BRANCH D -->
+      <details>
+        <summary><span class="tag q">D</span> "How much does it cost?" <span class="chev">▶</span></summary>
+        <div class="body">
+          <div class="block script">"I'll be honest with you — it depends on what you need, and I don't want to throw out a number before you've even seen what I put together. What I can tell you is I work with small businesses in the area, so I'm not charging agency prices. Some guys pay a one-time fee, some do a small monthly — we figure out what makes sense for you. But let's not even go there yet. Let me just show you the mock-up on a Google Meet at 5 — if you love it, we talk numbers. If not, zero obligation. Does that work?"</div>
+        </div>
+      </details>
+
+      <!-- BRANCH E -->
+      <details>
+        <summary><span class="tag q">E</span> "Is this a scam?" <span class="chev">▶</span></summary>
+        <div class="body">
+          <div class="block script">"Ha — I totally get why it sounds like one. Random number, free website, Google Meet — I'd be suspicious too. I'm just a local guy from the area who builds websites for landscaping companies. I've already done it for a few businesses nearby and I wanted to expand. I'm not asking for any money, any info, nothing. Just 10 minutes on a Google Meet where you can see my face, see the site, and decide for yourself. Worst case you wasted 10 minutes. Best case your phone starts ringing more. What do you have to lose?"</div>
+        </div>
+      </details>
+    </div>
+  </details>
+
+  <!-- ===== CLOSE ===== -->
+  <details open>
+    <summary>✅ They say YES to the meet <span class="chev">▶</span></summary>
+    <div class="body">
+      <div class="block script">"Perfect. I'll send you a Google Meet invite right now — what's your email?"</div>
+      <div class="note">Get the email, send the invite immediately while on the phone.</div>
+      <div class="block script">"Invite is sent — you should see it. And hey, I appreciate you giving me the shot. I'll see you at 5."</div>
+      <div class="block yes">NOW GO BUILD THE SITE 🚀</div>
+    </div>
+  </details>
+</div>
+
+<script>
+(function(){
+  var PASS="7729";
+  var gate=document.getElementById("gate"),app=document.getElementById("app"),
+      pw=document.getElementById("pw"),go=document.getElementById("go"),err=document.getElementById("err");
+
+  function unlock(){
+    if(pw.value===PASS){
+      try{sessionStorage.setItem("cc_unlocked","1");}catch(e){}
+      gate.style.display="none"; app.style.display="block";
+    }else{
+      err.textContent="Wrong passcode"; pw.value=""; pw.focus();
+    }
+  }
+  go.addEventListener("click",unlock);
+  pw.addEventListener("keydown",function(e){ if(e.key==="Enter") unlock(); });
+  pw.addEventListener("input",function(){ err.textContent=""; if(pw.value.length===4) unlock(); });
+
+  // stay unlocked for the session
+  try{ if(sessionStorage.getItem("cc_unlocked")==="1"){ gate.style.display="none"; app.style.display="block"; } else { pw.focus(); } }catch(e){ pw.focus(); }
+
+  // expand / collapse all
+  document.getElementById("openAll").addEventListener("click",function(){
+    document.querySelectorAll("#app details").forEach(function(d){d.open=true;});
+  });
+  document.getElementById("closeAll").addEventListener("click",function(){
+    document.querySelectorAll("#app details").forEach(function(d){d.open=false;});
+  });
+})();
+</script>
+</body>
+</html>
