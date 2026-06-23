@@ -68,6 +68,15 @@
   .no::before{content:"OBJECTION / NO ✕"; display:block; font-size:11px; font-weight:700; letter-spacing:1px; color:var(--red); margin-bottom:6px}
   .note{color:var(--muted); font-size:13px; font-style:italic; text-align:center; margin:6px 0}
 
+  /* Spanish phrasebook */
+  .phrase{background:var(--panel-2); border:1px solid var(--border); border-radius:12px; padding:12px 14px; margin:12px 0}
+  .phrase::before{content:"📖 QUICK SPANISH"; display:block; font-size:11px; font-weight:700; letter-spacing:1px; color:var(--muted); margin-bottom:8px}
+  .phrase .row{padding:7px 0; border-bottom:1px solid var(--border)}
+  .phrase .row:last-child{border-bottom:none}
+  .phrase b{color:var(--blue)}
+  .phrase em{color:var(--muted); font-style:normal; font-size:13px}
+  .phrase .en{display:block; color:var(--text); font-size:14px}
+
   /* ---------- Collapsibles ---------- */
   details{background:var(--panel); border:1px solid var(--border); border-radius:14px; margin:12px 0; overflow:hidden}
   details>summary{
@@ -123,6 +132,64 @@
       <div class="block script">"Hey, how's it going — did Howard from the IRS reach out to you today?"</div>
       <div class="note">— "No.. why?"</div>
       <div class="block script">"Well that's good because I don't know a Howard from the IRS. I was actually calling because I came across your business and I noticed you guys don't have a website. I actually went and put together a mock-up for you, free of charge. I want to jump on a quick Google Meet at the end of the day — like 5 o'clock — pull it up, walk you through it, takes 10 minutes. If you hate it we never have to talk again."</div>
+    </div>
+  </details>
+
+  <!-- ===== SPANISH-SPEAKING CLIENT ===== -->
+  <details>
+    <summary><span class="tag q">ES</span> Spanish-speaking client (skip the joke) <span class="chev">▶</span></summary>
+    <div class="body">
+      <div class="note">Use this the second you hear an accent, hesitation, or "¿qué?". Drop the IRS joke completely — jokes don't cross the language barrier, they just create confusion. Goal: warm, slow, simple. One idea per sentence. No idioms.</div>
+
+      <div class="branch-title">Open warm, in their language</div>
+      <div class="block script">"Hola, buenos días — my name is [Name]. ¿Cómo está?"</div>
+      <div class="note">Say it slow and friendly. A simple Spanish greeting instantly lowers their guard and earns respect — even if you say nothing else in Spanish.</div>
+
+      <div class="branch-title">The pitch — short, plain sentences</div>
+      <div class="block script">"I make websites for landscaping companies, here in the area. I made one for YOUR business — for free. I want to show you. It only takes 10 minutes."</div>
+      <div class="note">Pause after each sentence. Let them catch up. Emphasize "free / gratis" and "10 minutes" — those two words do the heavy lifting.</div>
+
+      <div class="phrase">
+        <div class="row"><b>Hola, ¿cómo está?</b> — <em>OH-lah, KOH-moh ess-TAH</em><span class="en">Hello, how are you?</span></div>
+        <div class="row"><b>¿Habla un poco de inglés?</b> — <em>AH-blah oon POH-koh deh een-GLESS</em><span class="en">Do you speak a little English?</span></div>
+        <div class="row"><b>Es gratis.</b> — <em>ess GRAH-tees</em><span class="en">It's free.</span></div>
+        <div class="row"><b>Sin compromiso.</b> — <em>seen kohm-proh-MEE-soh</em><span class="en">No obligation.</span></div>
+        <div class="row"><b>No se preocupe.</b> — <em>noh seh preh-oh-KOO-peh</em><span class="en">Don't worry.</span></div>
+        <div class="row"><b>Gracias por su tiempo.</b> — <em>GRAH-see-as por soo tee-EM-poh</em><span class="en">Thank you for your time.</span></div>
+      </div>
+
+      <div class="branch-title">Why a website (simplified)</div>
+      <div class="block script">"Many people look for landscapers on Google. With a website, they find YOU. More calls. More jobs. That is it."</div>
+
+      <!-- A LITTLE ENGLISH -->
+      <details>
+        <summary><span class="tag q">ES-A</span> "Un poco" / a little English <span class="chev">▶</span></summary>
+        <div class="body">
+          <div class="block yes">They speak some English and stay on the line.</div>
+          <div class="block script">"No problem — I talk slow. 👍 The website is free. I only want to show you. Okay? ¿Está bien?"</div>
+          <div class="note">If they're following along, you can move into the normal objection branches below — just keep every sentence short and skip slang.</div>
+        </div>
+      </details>
+
+      <!-- BARELY ANY ENGLISH -->
+      <details>
+        <summary><span class="tag r">ES-B</span> Barely any English — pivot to text <span class="chev">▶</span></summary>
+        <div class="body">
+          <div class="note">Don't force a live call or a Google Meet — it'll frustrate you both and kill the deal. Send the mock-up by text so they can look on their own time, maybe with family helping translate.</div>
+          <div class="block script">"No se preocupe. ¿Puedo mandarle un mensaje? — Can I text you the website? Es gratis. Sin compromiso."</div>
+          <div class="block script">"¿Cuál es su número? — What is a good number?"</div>
+          <div class="block yes">They give the number → text the mock-up link right away with a short Spanish note.</div>
+          <div class="phrase">
+            <div class="row"><b>Sample text to send:</b><span class="en">"Hola, soy [Name]. Le hice una página web GRATIS para su negocio. Aquí está: [link]. Si le gusta, hablamos. Sin compromiso. ¡Gracias!"</span></div>
+            <div class="row"><em>English: "Hi, I'm [Name]. I made you a FREE website for your business. Here it is: [link]. If you like it, we talk. No obligation. Thanks!"</em></div>
+          </div>
+          <div class="block no">Won't give a number.</div>
+          <div class="block script">"Está bien. Gracias por su tiempo. Que tenga buen día." <em style="color:var(--muted)">(It's okay. Thank you for your time. Have a good day.)</em></div>
+          <div class="note">Leave it warm — Spanish-speaking trades communities run heavily on word of mouth. A polite goodbye today can become a referral later.</div>
+        </div>
+      </details>
+
+      <div class="note">Once you're past the opener, the objection branches below (cost, scam, already have a site, etc.) all still apply — just deliver them in the same short, slow, simple style.</div>
     </div>
   </details>
 
